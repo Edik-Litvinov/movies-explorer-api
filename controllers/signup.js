@@ -7,7 +7,7 @@ const registrationUser = (req, res, next) => {
   bcrypt.hash(password, 7)
     .then((hash) => {
       userModel.create({ email, name, password: hash })
-        .then(() => res.status(200).send({ message: 'Регистрация прошла успешно' }))
+        .then(() => res.send({ message: 'Регистрация прошла успешно' }))
         .catch((err) => {
           if (err.name === 'MongoError' || err.code === '11000') {
             const emailConflict = new EmailAlreadyUse('Пользователь с таким емайлом уже существует');

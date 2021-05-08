@@ -6,7 +6,7 @@ const { errorHandler } = require('../errors/errorHandler');
 const getMovies = (req, res, next) => {
   const { _id } = req.user;
   MoviesModal.find({ owner: _id })
-    .then((movies) => res.status(200).send(movies))
+    .then((movies) => res.send(movies))
     .catch(next);
 };
 
@@ -30,7 +30,7 @@ const postMovie = (req, res, next) => {
     movieId,
     owner: _id,
   })
-    .then((film) => res.status(200).send(film))
+    .then((film) => res.send(film))
     .catch((err) => errorHandler(err, next));
 };
 
@@ -45,9 +45,9 @@ const deleteMovie = (req, res, next) => {
       if (JSON.stringify(movie.owner) !== JSON.stringify(_id)) {
         throw new DeleteMovieError('Удалять можно только свои фильмы');
       } else {
-        MoviesModal.findByIdAndRemove(movieId)
+        movie.remove()
           .then((film) => {
-            res.status(200).send({ message: `фильм ${film.id} удален` });
+            res.send({ message: `фильм ${film.id} удален` });
           })
           .catch(next);
       }

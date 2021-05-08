@@ -1,6 +1,7 @@
 const UserModal = require('../models/user');
 const { ErrorNotFound } = require('../errors/ErrorNotFound');
 const { errorHandler } = require('../errors/errorHandler');
+const { EmailAlreadyUse } = require('../errors/EmailAlreadyUse');
 
 const getUserData = (req, res, next) => {
   const { _id } = req.user;
@@ -9,7 +10,7 @@ const getUserData = (req, res, next) => {
       throw new ErrorNotFound('Такого пользователя нет');
     })
     .then((user) => {
-      res.status(200).send(user);
+      res.send(user);
     })
     .catch(next);
 };
@@ -26,7 +27,10 @@ const updateProfile = (req, res, next) => {
       throw new ErrorNotFound('Такого пользовотеля в базе нет');
     })
     .then((data) => {
-      res.status(200).send(data);
+      res.send(data);
+    })
+    .catch(() => {
+      throw new EmailAlreadyUse('Такой емаил уже используется');
     })
     .catch((err) => errorHandler(err, next));
 };

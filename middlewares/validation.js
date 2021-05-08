@@ -1,12 +1,17 @@
 const { celebrate, Joi } = require('celebrate');
+const isURL = require('validator/lib/isURL');
+const isEmail = require('validator/lib/isEmail');
 
 const signInValidationBody = celebrate({
   body: Joi.object().keys({
-    email: Joi.string().required().email().messages({
+    email: Joi.string().required().custom((value, helpers) => {
+      if (isEmail(value)) {
+        return value;
+      }
+      return helpers.message('Поле "email" заполнено не корректно');
+    }).messages({
       'string.empty': 'поле "email" не может быть пустым',
       'any.required': 'поле "email" обязательно',
-      'string.base': 'данные в строке "email" должны быть строкой',
-      'string.email': 'не корректный емаил',
     }),
     password: Joi.string().required().messages({
       'string.empty': 'поле "password" не может быть пустым',
@@ -18,11 +23,14 @@ const signInValidationBody = celebrate({
 
 const signUpValidationBody = celebrate({
   body: Joi.object().keys({
-    email: Joi.string().required().email().messages({
+    email: Joi.string().required().custom((value, helpers) => {
+      if (isEmail(value)) {
+        return value;
+      }
+      return helpers.message('Поле "email" заполнено не корректно');
+    }).messages({
       'string.empty': 'поле "email" не может быть пустым',
       'any.required': 'поле "email" обязательно',
-      'string.base': 'данные в строке "email" должны быть строкой',
-      'string.email': 'не корректный емаил',
     }),
     name: Joi.string().required().min(2).max(30)
       .messages({
@@ -42,11 +50,14 @@ const signUpValidationBody = celebrate({
 
 const userValidationBody = celebrate({
   body: Joi.object().keys({
-    email: Joi.string().required().email().messages({
+    email: Joi.string().required().custom((value, helpers) => {
+      if (isEmail(value)) {
+        return value;
+      }
+      return helpers.message('Поле "email" заполнено не корректно');
+    }).messages({
       'string.empty': 'поле "email" не может быть пустым',
       'any.required': 'поле "email" обязательно',
-      'string.base': 'данные в строке "email" должны быть строкой',
-      'string.email': 'не корректный емаил',
     }),
     name: Joi.string().required().min(2).max(30)
       .messages({
@@ -57,9 +68,6 @@ const userValidationBody = celebrate({
         'string.empty': 'поле "name" не может быть пустым',
       }),
   }),
-  headers: Joi.object().keys({
-    authorization: Joi.string().required(),
-  }).unknown(true),
 });
 
 const movieValidationBody = celebrate({
@@ -89,15 +97,23 @@ const movieValidationBody = celebrate({
       'string.base': 'данные в поле "description" должны быть строкой',
       'string.empty': 'поле "description" не может быть пустым',
     }),
-    image: Joi.string().required().regex(/https?:\/\/w*[\da-z\W]+#?/).messages({
+    image: Joi.string().required().custom((value, helpers) => {
+      if (isURL(value)) {
+        return value;
+      }
+      return helpers.message('Поле "image" заполнено не корректно');
+    }).messages({
       'string.empty': 'поле "image" не может быть пустым',
       'any.required': 'поле "image" обязательно',
-      'string.pattern.base': 'в поле "image" не корректный URL',
     }),
-    trailer: Joi.string().required().regex(/https?:\/\/w*[\da-z\W]+#?/).messages({
+    trailer: Joi.string().required().custom((value, helpers) => {
+      if (isURL(value)) {
+        return value;
+      }
+      return helpers.message('Поле "trailer" заполнено не корректно');
+    }).messages({
       'string.empty': 'поле "trailer" не может быть пустым',
       'any.required': 'поле "trailer" обязательно',
-      'string.pattern.base': 'в поле "trailer" не корректный URL',
     }),
     nameRU: Joi.string().required().regex(/^[а-яА-Я0-9]+$/).messages({
       'string.empty': 'поле "nameRU" не может быть пустым',
@@ -109,32 +125,30 @@ const movieValidationBody = celebrate({
       'any.required': 'поле "nameEN" обязательно',
       'string.pattern.base': ' в поле "nameEN" должны использоваться латинские символы',
     }),
-    thumbnail: Joi.string().required().regex(/https?:\/\/w*[\da-z\W]+#?/).messages({
+    thumbnail: Joi.string().required().custom((value, helpers) => {
+      if (isURL(value)) {
+        return value;
+      }
+      return helpers.message('Поле "thumbnail" заполнено не корректно');
+    }).messages({
       'string.empty': 'поле "thumbnail" не может быть пустым',
       'any.required': 'поле "thumbnail" обязательно',
-      'string.pattern.base': 'в поле "thumbnail" не корректный URL',
     }),
-    movieId: Joi.string().required().alphanum().length(24)
+    movieId: Joi.number().required()
       .messages({
         'any.required': 'movieId обязательое поле',
         'string.empty': 'поле "movieId" не может быть пустым',
-        'string.length': 'поле "movieId" должно состоять из 24 символов',
       }),
-    headers: Joi.object().keys({
-      authorization: Joi.string().required(),
-    }).unknown(true),
   }),
 });
 
 const movieValidationParams = celebrate({
   params: Joi.object().keys({
-    movieId: Joi.string().alphanum().length(24).messages({
+    movieId: Joi.string().hex().length(24).messages({
       'string.length': 'movieId должно состоять из 24 символов',
+      'string.hex': 'movieId должно состоять из 24 hex символов',
     }),
   }),
-  headers: Joi.object().keys({
-    authorization: Joi.string().required(),
-  }).unknown(true),
 });
 
 module.exports = {
