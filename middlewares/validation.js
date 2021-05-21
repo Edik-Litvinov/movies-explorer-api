@@ -115,15 +115,13 @@ const movieValidationBody = celebrate({
       'string.empty': 'поле "trailer" не может быть пустым',
       'any.required': 'поле "trailer" обязательно',
     }),
-    nameRU: Joi.string().required().regex(/^[а-яА-Я0-9]+$/).messages({
+    nameRU: Joi.string().required().messages({
       'string.empty': 'поле "nameRU" не может быть пустым',
       'any.required': 'поле "nameRU" обязательно',
-      'string.pattern.base': ' в поле "nameRU" должны использоваться кириллические символы',
     }),
-    nameEN: Joi.string().required().regex(/^[a-zA-Z0-9]+$/).messages({
+    nameEN: Joi.string().required().messages({
       'string.empty': 'поле "nameEN" не может быть пустым',
       'any.required': 'поле "nameEN" обязательно',
-      'string.pattern.base': ' в поле "nameEN" должны использоваться латинские символы',
     }),
     thumbnail: Joi.string().required().custom((value, helpers) => {
       if (isURL(value)) {
