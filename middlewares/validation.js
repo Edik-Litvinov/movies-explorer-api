@@ -142,10 +142,11 @@ const movieValidationBody = celebrate({
 
 const movieValidationParams = celebrate({
   params: Joi.object().keys({
-    movieId: Joi.string().hex().length(24).messages({
-      'string.length': 'movieId должно состоять из 24 символов',
-      'string.hex': 'movieId должно состоять из 24 hex символов',
-    }),
+    movieId: Joi.number().required()
+      .messages({
+        'any.required': 'movieId обязательое поле',
+        'string.empty': 'поле "movieId" не может быть пустым',
+      }),
   }),
 });
 
